@@ -1,0 +1,20 @@
+name: transactions_local
+services:
+  user_statements:
+    container_name: ahl_stori_challenge
+    image: ahl_stori_challenge
+    build:
+      context: ../
+      dockerfile: ./infrastructure/dockerfile
+    ports:
+      - "3002:3002" #port for invoking lambda
+    volumes:
+      - ../src:/app/src
+      - ../resources:/app/resources
+      - ../shared_data:/shared_data
+    env_file:
+      - ../.env
+    command:
+      - ${ARG1}
+   
+    

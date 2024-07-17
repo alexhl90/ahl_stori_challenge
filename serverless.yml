@@ -1,0 +1,30 @@
+# serverless.yml
+
+service: AHLProject
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: python3.8
+  region: ${env:AWS_DEFAULT_REGION, "us-east-1"}
+  stage: ${env:STAGE, "dev"}
+
+# Resources
+resources:
+  - ${file(resources/dynamoTable.yml)}
+  - ${file(resources/lambdaRole.yml)}
+
+functions:
+  GenerateHistory:
+    handler: src/generator/index.handler
+    role: LambdasDefaultRole
+  ProcessSummary:
+      handler: src/summary/index.handler
+
+plugins:
+  - serverless-offline
+custom:
+  serverless-offline:
+    httpPort: 3000
+    host: 0.0.0.0
+    reloadHandler: true

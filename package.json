@@ -1,0 +1,15 @@
+{
+  "name": "challenge_stori",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "serverless"
+  },
+  "author": "AHL",
+  "license": "ISC",
+  "devDependencies": {
+    "serverless": "^3.39.0",
+    "serverless-offline": "^13.6.0"
+  }
+}
