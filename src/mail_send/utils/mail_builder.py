@@ -1,17 +1,21 @@
-from typing import Dict
-import os
 import json
+import os
 from datetime import date as dt
+from typing import Dict
+
+
 def replace_tags(template_name, variables: Dict[str, str]) -> str:
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    html_path = os.path.join(current_dir, '..', 'templates', f'{template_name}.html')
-    
+    html_path = os.path.join(current_dir, "..", "templates", f"{template_name}.html")
+
     with open(html_path, "r", encoding="utf-8") as file:
         html_content = file.read()
     for key, value in variables.items():
         html_content = html_content.replace(f"!!{key}", str(value))
 
     return html_content
+
+
 def build_email_content(body: Dict[str, any]) -> str:
     fake_name = body.get("user_email").split("@")[0]
     summary = body.get("summary")
@@ -40,15 +44,20 @@ def build_email_content(body: Dict[str, any]) -> str:
             "DATE": dt.today().strftime("%B %d, %Y"),
         }
         html_content = replace_tags("body", body_variables)
-        html_content = html_content.replace(u'\xa0', u' ')
+        html_content = html_content.replace("\xa0", " ")
     except Exception as e:
         print(f"Error building email content: {str(e)}")
         return False
     return html_content
 
+
 def build_smtp_msg(
-    sender: str, receiver: str, html_content: str, subject: str = "Movements summary!", sender_nickname: str = "Stori Challenge"
-)-> str:
+    sender: str,
+    receiver: str,
+    html_content: str,
+    subject: str = "Movements summary!",
+    sender_nickname: str = "Stori Challenge",
+) -> str:
     from_statement = f"From: {sender_nickname} <{sender}>"
     to_statement = f"To:{receiver.split('@')[0]} <{receiver}>"
     message = f"""\

@@ -1,8 +1,9 @@
-from typing import List, Dict
-from datetime import date as dt
-import boto3
 import os
+from datetime import date as dt
+from typing import Dict, List
 from uuid import uuid4
+
+import boto3
 
 TABLE_NAME = os.environ.get("TABLE_NAME")
 

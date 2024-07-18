@@ -1,5 +1,6 @@
 import json
 import os
+
 import boto3
 
 STAGE = os.environ.get("STAGE", "local")

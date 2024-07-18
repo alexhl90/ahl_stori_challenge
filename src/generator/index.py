@@ -1,10 +1,14 @@
-import random
 import datetime
 import json
+import random
+
+
 # Función para generar una fecha aleatoria en el rango dado
 def random_date(start, end):
     return start + datetime.timedelta(
-        seconds=random.randint(0, int((end - start).total_seconds())))
+        seconds=random.randint(0, int((end - start).total_seconds()))
+    )
+
 
 # Generar datos
 def generate_data(num_rows, num_negatives):
@@ -34,27 +38,23 @@ def generate_data(num_rows, num_negatives):
 
     return data
 
+
 # Guardar datos en un archivo con formato pipe
 def save_to_file(data, filename, user_email):
     try:
-        with open(filename, 'w') as f:
+        with open(filename, "w") as f:
             f.write(f"user_email:{user_email}\n")
             f.write("id,date,transaction\n")
             for row in data:
                 f.write(f"{row[0]},{row[1]},{row[2]}\n")
     except Exception as e:
         print(f"Error saving data to file: {str(e)}")
-        return {
-            "statusCode": 500,
-            "body": json.dumps("Error saving data to file.")
-        }
-    return {
-        "statusCode": 200,
-        "body": "Data saved successfully."
-    }
+        return {"statusCode": 500, "body": json.dumps("Error saving data to file.")}
+    return {"statusCode": 200, "body": "Data saved successfully."}
+
 
 def handler(event, context):
     num_rows = 100
     num_negatives = 20
     data = generate_data(num_rows, num_negatives)
-    return save_to_file(data, '/shared_data/transactions.csv', event.get('user_email'))
+    return save_to_file(data, "/shared_data/transactions.csv", event.get("user_email"))

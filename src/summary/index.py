@@ -1,8 +1,9 @@
-from typing import List, Dict
-from datetime import datetime, date as dt
 import json
-
 import os
+from datetime import date as dt
+from datetime import datetime
+from typing import Dict, List
+
 from src.summary.utils import download_file_from_s3, invoke_lambda
 
 MAIL_LAMBDA = os.environ.get("MAIL_LAMBDA")
@@ -50,7 +51,7 @@ def process_txn(transactions: List[List]) -> Dict:
     # balance for each month
     for month, data in transactions_by_month.items():
         txn_amounts = [txn["transaction_amount"] for txn in data["transactions"]]
-        m_credit_txn = [txn_amt for txn_amt in txn_amounts if txn_amt > 0 ]
+        m_credit_txn = [txn_amt for txn_amt in txn_amounts if txn_amt > 0]
         m_debit_txn = [txn_amt for txn_amt in txn_amounts if txn_amt < 0]
         data["balance"] = round(sum(txn_amounts), 2)
         data["avg_credit"] = (
@@ -59,9 +60,7 @@ def process_txn(transactions: List[List]) -> Dict:
             else 0
         )
         data["avg_debit"] = (
-            round(sum(m_debit_txn) / len(m_debit_txn), 2)
-            if len(m_debit_txn) > 0
-            else 0
+            round(sum(m_debit_txn) / len(m_debit_txn), 2) if len(m_debit_txn) > 0 else 0
         )
 
     return {
