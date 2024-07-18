@@ -7,19 +7,46 @@ provider:
   name: aws
   runtime: python3.8
   region: ${env:AWS_DEFAULT_REGION, "us-east-1"}
-  stage: ${env:STAGE, "dev"}
-
+  stage: ${env:STAGE, "local"}
 # Resources
 resources:
-  - ${file(resources/dynamoTable.yml)}
-  - ${file(resources/lambdaRole.yml)}
+  - ${file(resources/storage/dynamoTable.yml)}
+  - ${file(resources/roles/lambdaRole.yml)}
 
 functions:
   GenerateHistory:
     handler: src/generator/index.handler
     role: LambdasDefaultRole
+    environment:
+      BUCKET_NAME: ${self:provider.stage}-transaction-bucket-${env:POSTFIX_RANDOM}
+
   ProcessSummary:
-      handler: src/summary/index.handler
+    handler: src/summary/index.handler
+    environment:
+      STAGE: ${self:provider.stage}
+      MAIL_LAMBDA: ${self:service}-${self:provider.stage}-MailSender
+      STORE_LAMBDA: ${self:service}-${self:provider.stage}-StoreTxn
+    events:
+      - s3:
+          bucket: ${self:provider.stage}-transaction-bucket-${env:POSTFIX_RANDOM}
+          event: s3:ObjectCreated:*
+          rules:
+            - suffix: .csv
+    role: LambdasDefaultRole
+  MailSender:
+    handler: src/mail_send/index.handler
+    environment:
+      SENDER_EMAIL: ${env:SENDER_EMAIL}
+      USE_TLS: ${env:USE_TLS}
+      SMTP_HOST: ${env:SMTP_HOST}
+      SMTP_PORT: ${env:SMTP_PORT}
+      SMTP_USER: ${env:SMTP_USER}
+      SMTP_USER_PASSWORD: ${env:SMTP_USER_PASSWORD}
+  StoreTxn:
+    handler: src/store_txn/index.handler
+    environment:
+      TABLE_NAME: ${self:provider.stage}-txn
+      role: LambdasDefaultRole
 
 plugins:
   - serverless-offline

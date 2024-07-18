@@ -1,3 +1,6 @@
 __pycache__
 .env
 shared_data
+.vscode
+node_modules
+.venv

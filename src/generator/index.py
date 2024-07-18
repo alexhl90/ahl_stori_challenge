@@ -8,7 +8,7 @@ def random_date(start, end):
 
 # Generar datos
 def generate_data(num_rows, num_negatives):
-    start_date = datetime.date(2024, 8, 1)
+    start_date = datetime.date(2024, 1, 1)
     end_date = datetime.date(2024, 8, 30)
     data = []
 
@@ -16,14 +16,14 @@ def generate_data(num_rows, num_negatives):
     for _ in range(num_negatives):
         date = random_date(start_date, end_date).strftime("%Y/%m/%d")  # Formatear fecha
         transaction = random.uniform(-1000, -1)  # Asegurar valor negativo
-        transaction_str = f"{transaction:+.1f}"  # Asegurar el signo explícito
+        transaction_str = f"{transaction:+.2f}"  # Asegurar el signo explícito
         data.append((date, transaction_str))
 
     # Generar transacciones positivas
     for _ in range(num_rows - num_negatives):
         date = random_date(start_date, end_date).strftime("%Y/%m/%d")  # Formatear fecha
         transaction = random.uniform(-1000, 10000)  # Asegurar valor positivo
-        transaction_str = f"{transaction:+.1f}"  # Asegurar el signo explícito
+        transaction_str = f"{transaction:+.2f}"  # Asegurar el signo explícito
         data.append((date, transaction_str))
 
     data.sort(key=lambda x: x[0])
@@ -57,4 +57,4 @@ def handler(event, context):
     num_rows = 100
     num_negatives = 20
     data = generate_data(num_rows, num_negatives)
-    return save_to_file(data, '/shared_data/transactions.csv', 'ale.herreraluz@gmail.com')
+    return save_to_file(data, '/shared_data/transactions.csv', event.get('user_email'))

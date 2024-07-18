@@ -2,7 +2,7 @@ Resources:
     LambdasDefaultRole:
       Type: AWS::IAM::Role
       Properties:
-        RoleName: ${self:provider.stage}-transfers-role
+        RoleName: ${self:provider.stage}-txn-${env:POSTFIX_RANDOM}
         AssumeRolePolicyDocument:
           Version: "2012-10-17"
           Statement:
@@ -12,7 +12,7 @@ Resources:
                   - lambda.amazonaws.com
               Action: sts:AssumeRole
         Policies:
-          - PolicyName: ${self:provider.stage}-transfer-policy
+          - PolicyName: ${self:provider.stage}-txn-${env:POSTFIX_RANDOM}
             PolicyDocument:
               Version: "2012-10-17"
               Statement:
@@ -38,19 +38,17 @@ Resources:
                       Fn::Join:
                         - ""
                         - - "arn:aws:s3:::"
-                          - ${self:provider.stage}-transfers-bucket-${env:POSTFIX_RANDOM}
+                          - ${self:provider.stage}-transaction-bucket-${env:POSTFIX_RANDOM}
                     - 
                       Fn::Join:
                         - ""
                         - - "arn:aws:s3:::"
-                          - ${self:provider.stage}-transfers-bucket-${env:POSTFIX_RANDOM}
+                          - ${self:provider.stage}-transaction-bucket-${env:POSTFIX_RANDOM}
                           - "/*"
                 - Effect: "Allow"
                   Action:
                     - "dynamodb:PutItem"
-                    - "dynamodb:GetItem"
-                    - "dynamodb:Scan"
-                    - "dynamodb:Query"
+                    - "dynamodb:BatchWriteItem"
                   Resource:
                     - 
                       Fn::Join:
@@ -59,4 +57,22 @@ Resources:
                           - Ref: "AWS::Region"
                           - ":"
                           - Ref: "AWS::AccountId"
-                          - ":table/${self:provider.stage}-transfers"
+                          - ":table/${self:provider.stage}-txn"
+                - Effect: Allow
+                  Action:
+                    - lambda:InvokeFunction
+                  Resource:
+                    - Fn::Join:
+                        - ""
+                        - - "arn:aws:lambda:"
+                          - Ref: AWS::Region
+                          - ":"
+                          - Ref: AWS::AccountId
+                          - ":function:${self:service}-${self:provider.stage}-MailSender"
+                    - Fn::Join:
+                        - ""
+                        - - "arn:aws:lambda:"
+                          - Ref: AWS::Region
+                          - ":"
+                          - Ref: AWS::AccountId
+                          - ":function:${self:service}-${self:provider.stage}-StoreTxn"

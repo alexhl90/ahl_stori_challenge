@@ -3,17 +3,17 @@ Resources:
     TransferTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:provider.stage}-transfers
+        TableName: ${self:provider.stage}-txn
         AttributeDefinitions:
           - AttributeName: txn_id
             AttributeType: S
-          - AttributeName: txn_type
+          - AttributeName: user_id
             AttributeType: S
-          - AttributeName: txn_date
-            AttributeType: N
         KeySchema:
-          - AttributeName: txn_id
+          - AttributeName: user_id
             KeyType: HASH
+          - AttributeName: txn_id
+            KeyType: RANGE
         BillingMode: PROVISIONED
         ProvisionedThroughput:
           ReadCapacityUnits: 5
