@@ -27,14 +27,15 @@ def build_email_content(body: Dict[str, any]) -> str:
                 "MONTH": month_data.get("name"),
                 "BALANCE": f"${month_data.get('balance'):.2f}",
                 "NUMBER": len(month_data.get("transactions")),
+                "AVG_DEBIT": f"${month_data.get('avg_debit'):.2f}",
+                "AVG_CREDIT": f"${month_data.get('avg_credit'):.2f}",
             }
-            
             monthly_html_part += replace_tags("monthly", variables)
         body_variables = {
             "NAME": fake_name,
             "TOTAL_BALANCE": f"${total_balance:.2f}",
-            "CREDIT_AMOUNT": avg_credit_txn,
-            "DEBIT_AMOUNT": avg_debit_txn_count,
+            "CREDIT_AMOUNT": f"${avg_credit_txn:.2f}",
+            "DEBIT_AMOUNT": f"${avg_debit_txn_count:.2f}",
             "MONTHLY_DATA": monthly_html_part,
             "DATE": dt.today().strftime("%B %d, %Y"),
         }

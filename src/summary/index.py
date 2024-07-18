@@ -1,7 +1,7 @@
 from typing import List, Dict
 from datetime import datetime, date as dt
 import json
-import boto3
+
 import os
 from src.summary.utils import download_file_from_s3, invoke_lambda
 
@@ -47,26 +47,22 @@ def process_txn(transactions: List[List]) -> Dict:
                 "name": month_text,
                 "transactions": [txn_info],
             }
-        # balance for each month
-        for month, data in transactions_by_month.items():
-            txn_amounts = [txn["transaction_amount"] for txn in data["transactions"]]
-            m_credit_txn = [
-                txn["transaction_amount"] > 0 for txn in data["transactions"]
-            ]
-            m_debit_txn = [
-                txn["transaction_amount"] < 0 for txn in data["transactions"]
-            ]
-            data["balance"] = round(sum(txn_amounts), 2)
-            data["avg_credit"] = (
-                round(sum(m_credit_txn) / len(m_credit_txn), 2)
-                if len(m_credit_txn) > 0
-                else 0
-            )
-            data["avg_debit"] = (
-                round(sum(m_debit_txn) / len(m_debit_txn), 2)
-                if len(m_debit_txn) > 0
-                else 0
-            )
+    # balance for each month
+    for month, data in transactions_by_month.items():
+        txn_amounts = [txn["transaction_amount"] for txn in data["transactions"]]
+        m_credit_txn = [txn_amt for txn_amt in txn_amounts if txn_amt > 0 ]
+        m_debit_txn = [txn_amt for txn_amt in txn_amounts if txn_amt < 0]
+        data["balance"] = round(sum(txn_amounts), 2)
+        data["avg_credit"] = (
+            round(sum(m_credit_txn) / len(m_credit_txn), 2)
+            if len(m_credit_txn) > 0
+            else 0
+        )
+        data["avg_debit"] = (
+            round(sum(m_debit_txn) / len(m_debit_txn), 2)
+            if len(m_debit_txn) > 0
+            else 0
+        )
 
     return {
         "total_balance": total_balance,
