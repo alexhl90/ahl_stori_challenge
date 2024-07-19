@@ -8,6 +8,7 @@ services:
       dockerfile: ./infrastructure/dockerfile
     ports:
       - "3002:3002" #port for invoking lambda
+      - "3000:3000" #port for invoking lambda
     volumes:
       - ../src:/app/src
       - ../resources:/app/resources

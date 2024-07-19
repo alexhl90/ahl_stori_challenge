@@ -47,6 +47,23 @@ functions:
     environment:
       TABLE_NAME: ${self:provider.stage}-txn
       role: LambdasDefaultRole
+  Parse:
+    handler: src/simple_loader/index.handler
+    events:
+      - httpApi:
+          path: /file_upload
+          method: get
+  Upload:
+    handler: src/upload/index.handler
+    events:
+      - httpApi:
+          path: /upload
+          method: post
+    environment:
+      S3_BUCKET_NAME: ${self:provider.stage}-transaction-bucket-${env:POSTFIX_RANDOM}
+    role: LambdasDefaultRole
+
+
 
 plugins:
   - serverless-offline

@@ -86,9 +86,22 @@ This will generate a CSV file with the transactions.
 make generate-txn EMAIL=the_fancy_email@example.com
 ```
 
-For AWS environments, it's important to change the `STAGE` variable from ".env" to something different.
+#### Test POC project
 
-#### Deploy
+A simple file uploader to upload the txn is here upload the file to the S3 of the APP, and run the process
+ans send the email from
+
+challenge_stori@gmail.com
+
+```
+https://b9egukwy4h.execute-api.us-east-1.amazonaws.com/file_upload
+
+```
+
+
+
+### Deploy
+For AWS environments, it's important to change the `STAGE` variable from ".env" to something different.
 
 If you want to deploy, change the `STAGE` environment variable to "test" or "stage".
 
@@ -96,7 +109,7 @@ If you want to deploy, change the `STAGE` environment variable to "test" or "sta
 make deploy
 ```
 
-#### Clean up
+### Clean up
 
 ```sh
 make destroy
@@ -104,5 +117,6 @@ make destroy
 
 ---
 
-This should ensure your document is clear and free of grammatical errors. Let me know if there's anything else you need!
+
+
 

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subir y Convertir CSV a Base64</title>
+</head>
+
+<body>
+    <h2>Subir documento</h2>
+    <label>Selecciona el archivo CSV generado o el Ejemplo</label>
+    
+    <input type="file" id="fileInput" accept=".csv">
+    <button onclick="convertToBase64()">Enviar</button>
+
+    <script>
+        const convertToBase64 = () => {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Challenge Stori. Por favor selecciona un archivo.');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                const base64String = event.target.result;
+                event.preventDefault
+                const textContent = JSON.stringify({ doc_b64: base64String }, null, 2);
+                await fetch(`/upload`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: textContent
+                })
+            };
+            reader.readAsDataURL(file);
+
+        }
+    </script>
+</body>
+
+</html>
