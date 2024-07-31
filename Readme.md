@@ -1,5 +1,3 @@
-Sure, I'll help you with a grammar check and some formatting improvements for your document.
-
 ---
 
 ## _Stori Challenge_
